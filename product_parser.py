@@ -7,6 +7,7 @@ import time
 import random
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import csv
 import yaml  # Добавляем импорт PyYAML
 from xml.etree import ElementTree as ET
@@ -14,6 +15,8 @@ from xml.dom import minidom
 import os
 from urllib.parse import urlparse
 import hashlib
+from multiprocessing import Pool, cpu_count
+import tqdm
 
 def get_product_details(url, timeout=20):
     driver = None
@@ -37,7 +40,7 @@ def get_product_details(url, timeout=20):
         chrome_options.add_argument('--disable-extensions')
         chrome_options.add_argument('--disable-infobars')
         
-        service = Service('/opt/homebrew/bin/chromedriver')
+        service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=chrome_options)
         
         # Маскируем WebDriver
@@ -243,7 +246,7 @@ def download_image(url, img_dir='img', timeout=10):
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--disable-dev-shm-usage')
         
-        service = Service('/opt/homebrew/bin/chromedriver')
+        service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=chrome_options)
         driver.set_page_load_timeout(timeout)
         
